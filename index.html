@@ -45,6 +45,9 @@
         <button id="ranking-button">Рейтинг</button>
     </div>
     <script>
+        // Инициализация Telegram Web App
+        Telegram.WebApp.ready();
+
         // Функция для отправки данных в бот
         const sendDataToBot = (data) => {
             Telegram.WebApp.sendData(JSON.stringify(data));
