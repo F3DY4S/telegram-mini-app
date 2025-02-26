@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mini App</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -30,7 +29,6 @@
             color: white;
             border-radius: 5px;
             cursor: pointer;
-            margin: 5px;
         }
         button:hover {
             background-color: #0056b3;
@@ -40,57 +38,30 @@
 <body>
     <div class="container">
         <h1>Mini App</h1>
-        <p>Теперь у тебя <span id="total-balance">0</span> токенов</p>
-        <p>Доступно для сбора: <span id="balance">0</span> токенов</p>
-        <button id="claim-button">Claim</button>
-        <button id="ranking-button">Рейтинг</button>
+        <p>Ваш баланс: <span id="balance">0</span> токенов</p>
+        <button id="claim-button">Собрать 10 токенов</button>
     </div>
     <script>
-        // Проверка Telegram Web App
-        if (!window.Telegram || !window.Telegram.WebApp) {
-            alert("Пожалуйста, откройте это приложение через Telegram-бота!");
-        } else {
-            Telegram.WebApp.ready();
-            console.log("Telegram Web App инициализирован, user:", Telegram.WebApp.initDataUnsafe.user);
-        }
-
         // Функция для отправки данных в бот
         const sendDataToBot = (data) => {
-            console.log("Отправка в бот:", data);
             Telegram.WebApp.sendData(JSON.stringify(data));
         };
 
-        // Функция для обновления интерфейса
-        const updateBalance = (balance, totalBalance) => {
-            document.getElementById("balance").textContent = balance;
-            document.getElementById("total-balance").textContent = totalBalance;
-        };
-
-        // Обработчик кнопки "Claim"
+        // Обработчик кнопки "Собрать токены"
         document.getElementById("claim-button").addEventListener("click", () => {
-            sendDataToBot({ action: "claim_tokens" });
+            sendDataToBot({ action: "claim_tokens", amount: 10 });
         });
 
-        // Обработчик кнопки "Рейтинг"
-        document.getElementById("ranking-button").addEventListener("click", () => {
-            Telegram.WebApp.openLink("https://t.me/NewJettonCoin_bot?start=ranking"); // Используй username своего бота
+        // Получение баланса при загрузке Mini App
+        sendDataToBot({ action: "get_balance" });
+
+        // Обработка сообщений от бота
+        Telegram.WebApp.onEvent("message", (message) => {
+            const data = JSON.parse(message);
+            if (data.action === "update_balance") {
+                document.getElementById("balance").textContent = data.balance;
+            }
         });
-
-        // Получение баланса при загрузке
-        window.onload = () => {
-            sendDataToBot({ action: "get_balance" });
-        };
-
-        // Обработка данных от бота (через initData или webhook)
-        Telegram.WebApp.onEvent("viewportChanged", () => {
-            console.log("Viewport изменён, запрашиваем баланс");
-            sendDataToBot({ action: "get_balance" });
-        });
-
-        // Автоматическое обновление баланса каждые 3 секунды
-        setInterval(() => {
-            sendDataToBot({ action: "get_balance" });
-        }, 3000);
     </script>
 </body>
 </html>
