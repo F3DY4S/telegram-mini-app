@@ -46,9 +46,13 @@
         <button id="ranking-button">Рейтинг</button>
     </div>
     <script>
-        // Инициализация Telegram Web App
-        Telegram.WebApp.ready();
-        console.log("Telegram Web App инициализирован");
+        // Проверка Telegram Web App
+        if (!window.Telegram || !window.Telegram.WebApp) {
+            alert("Пожалуйста, откройте это приложение через Telegram-бота!");
+        } else {
+            Telegram.WebApp.ready();
+            console.log("Telegram Web App инициализирован, user:", Telegram.WebApp.initDataUnsafe.user);
+        }
 
         // Функция для отправки данных в бот
         const sendDataToBot = (data) => {
@@ -69,7 +73,7 @@
 
         // Обработчик кнопки "Рейтинг"
         document.getElementById("ranking-button").addEventListener("click", () => {
-            Telegram.WebApp.openLink("https://t.me/your_bot_username?start=ranking"); // Замени на username твоего бота
+            Telegram.WebApp.openLink("https://t.me/NewJettonCoin_bot?start=ranking"); // Используй username своего бота
         });
 
         // Получение баланса при загрузке
@@ -77,13 +81,10 @@
             sendDataToBot({ action: "get_balance" });
         };
 
-        // Обработка сообщений от бота
-        Telegram.WebApp.onEvent("web_app_data", (event) => {
-            console.log("Получено от бота:", event.data);
-            const data = JSON.parse(event.data);
-            if (data.action === "update_balance") {
-                updateBalance(data.balance, data.total_balance);
-            }
+        // Обработка данных от бота (через initData или webhook)
+        Telegram.WebApp.onEvent("viewportChanged", () => {
+            console.log("Viewport изменён, запрашиваем баланс");
+            sendDataToBot({ action: "get_balance" });
         });
 
         // Автоматическое обновление баланса каждые 3 секунды
