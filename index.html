@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -45,8 +46,13 @@
         <button id="ranking-button">Рейтинг</button>
     </div>
     <script>
+        // Инициализация Telegram Web App
+        Telegram.WebApp.ready();
+        console.log("Telegram Web App инициализирован");
+
         // Функция для отправки данных в бот
         const sendDataToBot = (data) => {
+            console.log("Отправка в бот:", data);
             Telegram.WebApp.sendData(JSON.stringify(data));
         };
 
@@ -63,15 +69,18 @@
 
         // Обработчик кнопки "Рейтинг"
         document.getElementById("ranking-button").addEventListener("click", () => {
-            Telegram.WebApp.openLink("https://t.me/your_bot_username?start=ranking");  // Замените на команду для рейтинга
+            Telegram.WebApp.openLink("https://t.me/your_bot_username?start=ranking"); // Замени на username твоего бота
         });
 
-        // Получение баланса при загрузке Mini App
-        sendDataToBot({ action: "get_balance" });
+        // Получение баланса при загрузке
+        window.onload = () => {
+            sendDataToBot({ action: "get_balance" });
+        };
 
         // Обработка сообщений от бота
-        Telegram.WebApp.onEvent("message", (message) => {
-            const data = JSON.parse(message);
+        Telegram.WebApp.onEvent("web_app_data", (event) => {
+            console.log("Получено от бота:", event.data);
+            const data = JSON.parse(event.data);
             if (data.action === "update_balance") {
                 updateBalance(data.balance, data.total_balance);
             }
