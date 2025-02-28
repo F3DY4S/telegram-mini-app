@@ -34,11 +34,17 @@
         button:hover {
             background-color: #0056b3;
         }
+        .warning {
+            color: red;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Mini App</h1>
+        <div id="warning" class="warning"></div>
         <p>Теперь у тебя <span id="total-balance">0</span> токенов</p>
         <p>Доступно для сбора: <span id="balance">0</span> токенов</p>
         <button id="claim-button">Claim</button>
@@ -88,7 +94,9 @@
             }, 3000);
         } else {
             // Если Mini App запущен вне Telegram
-            alert("Этот Mini App работает только внутри Telegram. Откройте его через бота.");
+            document.getElementById("warning").textContent = "Этот Mini App работает только внутри Telegram. Откройте его через бота.";
+            document.getElementById("claim-button").disabled = true;
+            document.getElementById("ranking-button").disabled = true;
         }
     </script>
 </body>
