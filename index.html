@@ -78,20 +78,22 @@
             });
 
             // Получение баланса при загрузке Mini App
+            document.getElementById("balance").textContent = "Загрузка...";
+            document.getElementById("total-balance").textContent = "Загрузка...";
             sendDataToBot({ action: "get_balance" });
 
             // Обработка сообщений от бота
-            Telegram.WebApp.onEvent("message", (message) => {
+            Telegram.WebApp.onEvent("messageReceived", (message) => {
                 const data = JSON.parse(message);
                 if (data.action === "update_balance") {
                     updateBalance(data.balance, data.total_balance);
                 }
             });
 
-            // Автоматическое обновление баланса каждые 3 секунды
+            // Автоматическое обновление баланса каждые 10 секунд
             setInterval(() => {
                 sendDataToBot({ action: "get_balance" });
-            }, 3000);
+            }, 10000); // 10 секунд
         } else {
             // Если Mini App запущен вне Telegram
             document.getElementById("warning").textContent = "Этот Mini App работает только внутри Telegram. Откройте его через бота.";
