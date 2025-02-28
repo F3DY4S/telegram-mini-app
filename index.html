@@ -84,9 +84,13 @@
 
             // Обработка сообщений от бота
             Telegram.WebApp.onEvent("messageReceived", (message) => {
-                const data = JSON.parse(message);
-                if (data.action === "update_balance") {
-                    updateBalance(data.balance, data.total_balance);
+                try {
+                    const data = JSON.parse(message);
+                    if (data.action === "update_balance") {
+                        updateBalance(data.balance, data.total_balance);
+                    }
+                } catch (error) {
+                    console.error("Ошибка при обработке сообщения от бота:", error);
                 }
             });
 
